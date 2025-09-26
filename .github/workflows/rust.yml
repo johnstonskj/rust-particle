@@ -37,7 +37,7 @@ jobs:
         profile: minimal
         override: true
         
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
       
     - name: Check publish
       uses: actions-rs/cargo@v1
@@ -85,7 +85,7 @@ jobs:
         profile: minimal
         override: true
         
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
       
     - name: Build
       uses: actions-rs/cargo@v1
@@ -120,7 +120,7 @@ jobs:
         profile: minimal
         override: true
         
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
       
     - name: Run benchmarks with all features
       uses: actions-rs/cargo@v1
@@ -149,7 +149,7 @@ jobs:
         profile: minimal
         override: true
         
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
       
     - name: Run examples with all features
       uses: actions-rs/cargo@v1
@@ -208,7 +208,7 @@ jobs:
         profile: minimal
         override: true
         
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
       
     - name: Generate documentation
       uses: actions-rs/cargo@v1
@@ -232,7 +232,7 @@ jobs:
         override: true
         components: rustfmt
               
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
 
     - name: Check formatting
       uses: actions-rs/cargo@v1
@@ -256,7 +256,7 @@ jobs:
         override: true
         components: clippy
               
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
 
     - uses: actions-rs/clippy-check@v1
       with:
