@@ -71,7 +71,7 @@ macro_rules! impl_enum_state {
             pub struct $class_name;
 
             #[derive(Clone, Copy, ::std::fmt::Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
-            #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+            #[cfg_attr(feature = "serde", derive(::serde::Deserialize, ::serde::Serialize))]
             #[repr(u32)]
             pub enum $state_enum_name {
                 $(

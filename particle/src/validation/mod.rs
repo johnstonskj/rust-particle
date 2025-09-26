@@ -9,7 +9,9 @@
 mod macros;
 
 pub mod error;
-pub use error::ValidationError;
+pub use error::{ValidationError, ValidationIssue};
+
+pub mod issues;
 
 pub mod traits;
 pub use traits::{HasFastValidation, HasValidation};

@@ -1,0 +1,42 @@
+[book]
+title = "Particle Project Documentation"
+description = "The Particle project"
+authors = ["Simon Johnston <johnstonskj@gmail.com>"]
+language = "en"
+multilingual = false
+
+[rust]
+edition = "2021"
+
+[build]
+build-dir = "book"
+
+# [preprocessor.alerts]
+# 
+# [preprocessor.footnote]
+# 
+# [preprocessor.graphviz]
+# command = "mdbook-graphviz"
+# output-to-file = false
+# 
+# [preprocessor.image-size]
+# command = "mdbook-image-size"
+# 
+# [preprocessor.indexing]
+# 
+# [preprocessor.plantuml]
+# plantuml-cmd = "plantuml"
+# clickable-img = true
+
+[output.html]
+git-repository-url = "https://github.com/johnstonskj/rust-particle/tree/main/particle-doc"
+edit-url-template = "https://github.com/johnstonskj/rust-particle/edit/main/particle-doc/{path}"
+
+[output.html.search]
+limit-results = 20
+use-boolean-and = true
+boost-title = 2
+boost-hierarchy = 2
+boost-paragraph = 1
+expand = true
+heading-split-level = 2

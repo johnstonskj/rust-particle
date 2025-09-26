@@ -2,7 +2,7 @@
 //! Particle Builder traits.
 //!
 
-use crate::builders::BuilderError;
+use crate::{names::Name, validation::ValidationError};
 use core::fmt::Debug;
 
 // ------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ pub trait BuilderRoot: Debug + Default {
 }
 
 pub trait Builder: BuilderRoot {
-    fn build(self) -> Result<<Self as BuilderRoot>::Output, BuilderError>;
+    fn build<N: Name>(self) -> Result<<Self as BuilderRoot>::Output, ValidationError<N>>;
 }
 
 pub trait InfallibleBuilder: BuilderRoot {

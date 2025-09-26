@@ -2,12 +2,19 @@
 //! Provides traits, and classifiers, for Particle prioritization.
 //!
 
+use crate::{defn_class, impl_class};
+
 // ------------------------------------------------------------------------------------------------
-// Public Types ❱ Priority Classifier
+// Public Types ❱ Classifiers
 // ------------------------------------------------------------------------------------------------
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct PriorityClass;
+defn_class! { Priority }
+
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ Classifiers
+// ------------------------------------------------------------------------------------------------
+
+impl_class! { Priority }
 
 // ------------------------------------------------------------------------------------------------
 // Modules

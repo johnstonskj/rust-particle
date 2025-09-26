@@ -3,7 +3,10 @@
 //!
 
 use crate::{values::traits::Value, wrappers::IntoInner};
-use core::fmt::Display;
+use core::fmt::{Display, Formatter, Result as FmtResult};
+
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Timestamp
@@ -29,6 +32,7 @@ pub trait Timestamp: Value + IntoInner<i128> {
 // ------------------------------------------------------------------------------------------------
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[repr(u8)]
 pub enum TimestampPrecision {
     Second = 0,
@@ -44,7 +48,7 @@ pub enum TimestampPrecision {
 // ------------------------------------------------------------------------------------------------
 
 impl Display for TimestampPrecision {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         if f.alternate() {
             let exponent = *self as u8;
             let actual: i32 = if exponent == 0 { 0 } else { -(exponent as i32) };

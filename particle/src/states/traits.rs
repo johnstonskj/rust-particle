@@ -5,15 +5,25 @@
 use crate::{
     builders::Builder,
     classes::HasClassification,
-    names::traits::{BuilderNameFragment, HasName},
-    properties::PropertyError,
-    strings::{HasTextIcon, UncheckedFromStr},
-    validation::HasValidation,
+    names::{
+        traits::{BuilderNameFragment, HasName},
+        Name,
+    },
+    strings::{HasTextIcon, UncheckedNewStr},
+    validation::{HasValidation, ValidationError},
+};
+#[cfg(not(feature = "std"))]
+use alloc::{
+    format,
+    string::{String, ToString},
 };
 use core::{
     fmt::{Debug, Display, Formatter, Result as FmtResult},
     hash::Hash,
 };
+
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱  State / Set
@@ -122,7 +132,7 @@ pub trait StateBuilder<T: State>:
 
     #[inline(always)]
     fn new_initial_unchecked<S: AsRef<str>>(name: S) -> Self {
-        Self::new_initial(<<T as HasName>::Name as UncheckedFromStr>::new_unchecked(
+        Self::new_initial(<<T as HasName>::Name as UncheckedNewStr>::new_unchecked(
             name,
         ))
     }
@@ -134,7 +144,7 @@ pub trait StateBuilder<T: State>:
 
     #[inline(always)]
     fn new_normal_unchecked<S: AsRef<str>>(name: S) -> Self {
-        Self::new_normal(<<T as HasName>::Name as UncheckedFromStr>::new_unchecked(
+        Self::new_normal(<<T as HasName>::Name as UncheckedNewStr>::new_unchecked(
             name,
         ))
     }
@@ -146,7 +156,7 @@ pub trait StateBuilder<T: State>:
 
     #[inline(always)]
     fn new_internal_unchecked<S: AsRef<str>>(name: S) -> Self {
-        Self::new_internal(<<T as HasName>::Name as UncheckedFromStr>::new_unchecked(
+        Self::new_internal(<<T as HasName>::Name as UncheckedNewStr>::new_unchecked(
             name,
         ))
     }
@@ -158,7 +168,7 @@ pub trait StateBuilder<T: State>:
 
     #[inline(always)]
     fn new_final_unchecked<S: AsRef<str>>(name: S) -> Self {
-        Self::new_final(<<T as HasName>::Name as UncheckedFromStr>::new_unchecked(
+        Self::new_final(<<T as HasName>::Name as UncheckedNewStr>::new_unchecked(
             name,
         ))
     }
@@ -173,10 +183,11 @@ pub trait StateBuilder<T: State>:
 // Public Types ❱ State Kinds
 // ------------------------------------------------------------------------------------------------
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 pub enum StateKind {
     Initial,
+    #[default]
     Normal,
     Internal,
     Final,
@@ -193,7 +204,7 @@ pub trait HasState {
 }
 
 pub trait HasStateMut: HasState {
-    fn set_state(&mut self, state: Self::State) -> Result<(), PropertyError>;
+    fn set_state<N: Name>(&mut self, state: Self::State) -> Result<(), ValidationError<N>>;
 }
 
 pub trait HasPotentialStates {

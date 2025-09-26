@@ -2,7 +2,9 @@
 //! Particle Builder traits.
 //!
 
-use crate::names::{HasName, Name};
+use crate::{classes::ClassifierName, properties::Singleton};
+#[cfg(not(feature = "std"))]
+use alloc::{vec, vec::Vec};
 use core::{fmt::Debug, hash::Hash};
 
 // ------------------------------------------------------------------------------------------------
@@ -10,21 +12,24 @@ use core::{fmt::Debug, hash::Hash};
 // ------------------------------------------------------------------------------------------------
 
 pub trait Classifier:
-    HasName + Clone + Debug + Default + PartialEq + Eq + Hash + PartialOrd + Ord
+    Singleton + Clone + Debug + Default + PartialEq + Eq + Hash + PartialOrd + Ord
 {
     type Super: Classifier;
 
     /* const */
-    fn super_class(&self) -> Option<Self::Super>;
+    fn name(&self) -> &ClassifierName;
 
-    fn class_path<N: Name>(&self) -> Vec<N> {
+    /* const */
+    fn super_class(&self) -> Option<&Self::Super>;
+
+    fn class_path(&self) -> Vec<ClassifierName> {
         let class_name = self.name();
         if let Some(super_class) = self.super_class() {
             let mut super_path = super_class.class_path();
-            super_path.push(N::new_unchecked(class_name.as_ref()));
+            super_path.push(class_name.clone());
             super_path
         } else {
-            vec![N::new_unchecked(class_name.as_ref())]
+            vec![class_name.clone()]
         }
     }
 }

@@ -2,7 +2,7 @@
 //! Particle Value traits.
 //!
 
-use std::{fmt::Debug, hash::Hash};
+use core::{fmt::Debug, hash::Hash};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Value Traits

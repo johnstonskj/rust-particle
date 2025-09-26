@@ -4,23 +4,25 @@
 
 use crate::{
     builders::BuilderRoot,
-    classes::HasClassification,
-    strings::{AsStr, CheckedFromStr, UncheckedFromStr},
+    strings::{AsStr, CheckedFromStr, UncheckedNewStr},
 };
-use std::{
+use core::{
     fmt::{Debug, Display},
     hash::Hash,
 };
+
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Individual Name
 // ------------------------------------------------------------------------------------------------
 
 pub trait Name:
-    HasClassification
+    AsStr
     + CheckedFromStr
-    + UncheckedFromStr
-    + AsStr
+    + UncheckedNewStr
+    + Into<String>
     + Clone
     + Debug
     + Display
@@ -35,6 +37,11 @@ pub trait Name:
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Has Name traits
 // ------------------------------------------------------------------------------------------------
+
+pub trait HasStaticName {
+    /* const */
+    fn name(&self) -> &'static str;
+}
 
 pub trait HasName {
     type Name: Name;

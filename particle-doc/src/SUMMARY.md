@@ -1,0 +1,23 @@
+# Summary
+
+- [Introduction](README.md)
+  - [The Particle philosophy](intro-philosophy.md)
+  - [Why "Particle"?](intro-why.md)
+  - [What is a Particle?](intro-what-is.md)
+- [Categories](categories.md)
+  - [Classification](cat-classification.md)
+  - [Builders](cat-builder.md)
+  - [Configuration](cat-configuration.md)
+  - [Errors](cat-error.md)
+  - [Properties](cat-property.md)
+    - [Identifiers](cat-identifier.md)
+    - [Names](cat-name.md)
+    - [Priorities](cat-priority.md)
+    - [States](cat-state.md)
+  - [Utilities](cat-utility.md)
+  - [Vaidation](cat-validation.md)
+  - [Values](cat-value.md)
+- [Crates](crates.md)
+  - [particle (core)](crate-particle.md)
+
+- [License](LICENSE.md)

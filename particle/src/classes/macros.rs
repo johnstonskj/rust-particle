@@ -1,99 +1,126 @@
 #[macro_export]
+macro_rules! defn_class {
+    ($name:ident) => {
+        pastey::paste! {
+            #[derive(
+                ::core::clone::Clone,
+                ::core::cmp::PartialEq,
+                ::core::cmp::Eq,
+                ::core::cmp::PartialOrd,
+                ::core::cmp::Ord,
+                ::core::default::Default,
+                ::core::fmt::Debug,
+                ::core::hash::Hash,
+                ::core::marker::Copy,
+            )]
+            #[doc = "Implementation of the `" $name "` class, specifically the `Classifier` trait."]
+            pub struct [< $name:camel Class >];
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! impl_class {
     (
-        $impl_type:ty ;
-        $class_name_str:literal
+        $name:ident
     ) => {
-        $crate::impl_class!(
-            $impl_type : $crate::classes::TopClass => CLASS_INSTANCE ;
-            $class_name_str => CLASS_NAME : $crate::properties::simple::name::SimpleName
-        );
+        impl_class! {
+            $name : $crate::classes::ClassClass
+        }
     };
     (
-        $impl_type:ty => $class_instance_name:ident ;
-        $class_name_str:literal => $class_const_name:ident
+        $name:ident : $super_class_type:ty
     ) => {
-        $crate::impl_class!(
-            $impl_type : $crate::classes::TopClass => $class_instance_name ;
-            $class_name_str => $class_const_name : $crate::properties::simple::name::SimpleName
-        );
-    };
-    (
-        $impl_type:ty => $class_instance_name:ident ;
-        $class_name_str:literal => $class_const_name:ident : $name_type:ty
-    ) => {
-        $crate::impl_class!(
-            $impl_type : $crate::properties::class::TopClass => $class_instance_name ;
-            $class_name_str => $class_const_name : $name_type
-        );
-    };
-    (
-        $impl_type:ty : $super_type:ty => $class_instance_name:ident ;
-        $class_name_str:literal => $class_const_name:ident
-    ) => {
-        $crate::impl_class!(
-            $impl_type : $super_type => $class_instance_name ;
-            $class_name_str => $class_const_name : $crate::properties::simple::name::SimpleName
-        );
-    };
-    (
-        $impl_type:ty : $super_type:ty => $class_instance_name:ident ;
-        $class_name_str:literal => $class_const_name:ident : $name_type:ty
-    ) => {
-        static $class_const_name: ::std::sync::LazyLock<$name_type>
-            = ::std::sync::LazyLock::new(||<$name_type as $crate::strings::UncheckedFromStr>::new_unchecked($class_name_str));
-
-        impl $crate::names::HasName for $impl_type {
-            type Name = $name_type;
-
-            fn name(&self) -> &$name_type {
-                &$class_const_name
+        pastey::paste! {
+            impl_class! {
+                @inner
+                stringify!([< $name:camel >]),
+                [< $name:snake:upper _CLASS_NAME_STR >],
+                [< $name:snake:upper _CLASS_NAME >],
+                [< $name:snake:upper _CLASS >],
+                [< $name:camel Class >],
+                $super_class_type
             }
         }
+    };
+    (
+        @inner
+        $class_name_str:expr,
+        $const_class_name_str:ident,
+        $const_class_name:ident,
+        $const_class:ident,
+        $impl_type:ident,
+        $super_class_type:ty
+    ) => {
+        pastey::paste! {
+            const $const_class_name_str: &str = $class_name_str;
+            const $const_class_name: $crate::classes::ClassifierName
+                = $crate::classes::ClassifierName::new_unchecked($const_class_name_str);
+            const $const_class: $impl_type = $impl_type::new();
 
-        impl $crate::classes::Class for $impl_type {
-            type Super = $super_type;
+            impl $crate::classes::Classifier for $impl_type {
+                type Super = $super_class_type;
 
-            fn super_class(&self) -> core::option::Option<Self::Super> {
-                Some(<$super_type>::default())
+                fn super_class(&self) -> Option<&Self::Super> {
+                    Some(<Self::Super as $crate::properties::Singleton>::instance())
+                }
+
+                fn name(&self) -> &$crate::classes::ClassifierName {
+                    &$const_class_name
+                }
             }
-        }
 
-        impl $crate::properties::aci::ProvidesAmznCommonIdentifier for $impl_type {
-            type Name = $crate::properties::simple::name::SimpleName;
+            impl $crate::classes::HasClassification for $impl_type {
+                type Classifier = $crate::classes::ClassClass;
 
-            fn provide_aci(&self) -> $crate::properties::aci::AmznCommonIdentifier<Self::Name> {
-                $crate::properties::aci::AmznCommonIdentifier::new_unchecked(&["Class"])
-                    .named(
-                        <$crate::properties::names::SimpleName as $crate::strings::UncheckedFromStr>::new_unchecked(
-                            $class_const_name.as_str()
-                        )
+                fn classifiers(&self) -> impl Iterator<Item = &Self::Classifier> {
+                    ::core::iter::once(
+                        <Self::Classifier as $crate::properties::Singleton>::instance()
                     )
+                }
+            }
+
+            impl $crate::properties::Singleton for $impl_type {
+                fn instance() -> &'static Self {
+                    &$const_class
+                }
+            }
+
+            impl $impl_type {
+                const fn new() -> Self {
+                    Self
+                }
             }
         }
-
-        pub static $class_instance_name: ::std::sync::LazyLock<$impl_type>
-            = ::std::sync::LazyLock::new(|| <$impl_type>::default());
     };
 }
 
 #[macro_export]
 macro_rules! impl_has_class {
-    ($impl_type:ty => $class_type:ty, const $instance_name:ident) => {
-        impl $crate::classes::HasClass for $impl_type {
-            type Class = $class_type;
+    ($impl_type:ty => $class_type:ty) => {
+        impl $crate::classes::HasClassification for $impl_type {
+            type Classifier = $class_type;
 
-            fn class(&self) -> &Self::Class {
-                &$instance_name
+            fn classifiers(&self) -> impl Iterator<Item = &Self::Classifier> {
+                ::core::iter::once(<Self::Classifier as $crate::properties::Singleton>::instance())
+            }
+        }
+    };
+    ($impl_type:ty => $class_type:ty, const $const_array:ident) => {
+        impl $crate::classes::HasClassification for $impl_type {
+            type Classifier = $class_type;
+
+            fn classifiers(&self) -> impl Iterator<Item = &Self::Classifier> {
+                $const_array.iter()
             }
         }
     };
     ($impl_type:ty => $class_type:ty, field $field_name:ident) => {
-        impl $crate::classes::HasClass for $impl_type {
-            type Class = $class_type;
+        impl $crate::classes::HasClassification for $impl_type {
+            type Classifier = $class_type;
 
-            fn class(&self) -> &Self::Class {
-                &self.$field_name
+            fn classifiers(&self) -> impl Iterator<Item = &Self::Classifier> {
+                self.$field_name.iter()
             }
         }
     };

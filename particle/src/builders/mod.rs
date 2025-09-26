@@ -6,8 +6,5 @@
 // Modules
 // ------------------------------------------------------------------------------------------------
 
-pub mod error;
-pub use error::BuilderError;
-
 pub mod traits;
 pub use traits::{Builder, BuilderRoot, HasBuilder, HasInfallibleBuilder, InfallibleBuilder};

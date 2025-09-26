@@ -2,12 +2,19 @@
 //! Provides traits, and classifiers, for Particle names.
 //!
 
+use crate::{defn_class, impl_class};
+
 // ------------------------------------------------------------------------------------------------
-// Public Types ❱ Individual Name
+// Public Types ❱ Classifiers
 // ------------------------------------------------------------------------------------------------
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct NameClass;
+defn_class! { Name }
+
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ Classifiers
+// ------------------------------------------------------------------------------------------------
+
+impl_class! { Name }
 
 // ------------------------------------------------------------------------------------------------
 // Modules
@@ -17,3 +24,5 @@ mod macros;
 
 pub mod traits;
 pub use traits::{HasName, HasNameMut, Name};
+
+pub mod testing;

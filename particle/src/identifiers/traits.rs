@@ -1,5 +1,5 @@
 use crate::classes::HasClassification;
-use std::{
+use core::{
     fmt::{Debug, Display},
     hash::Hash,
 };

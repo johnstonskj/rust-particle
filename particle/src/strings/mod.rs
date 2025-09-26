@@ -9,7 +9,7 @@
 pub mod common;
 pub use common::{
     AsStr, CheckedFromStr, InfallibleFromStr, LengthLimitedTextProperty, TextProperty,
-    UncheckedFromStr,
+    UncheckedNewStr,
 };
 
 pub mod descriptions;
