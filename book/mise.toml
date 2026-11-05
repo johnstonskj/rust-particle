@@ -1,0 +1,21 @@
+[tools]
+mdbook = "latest"
+
+[tasks."book:lint"]
+tools.markdownlint-cli2 = "latest"
+dir = "{{ config_root }}"
+run = "markdownlint-cli2 \"src/**/*.md\""
+
+[tasks."book:build"]
+dir = "{{ config_root }}"
+run = "mdbook build"
+
+[tasks."book:test"]
+depends = ["book:build"]
+dir = "{{ config_root }}"
+run = "mdbook test"
+
+[tasks."book:serve"]
+depends = ["book:build"]
+dir = "{{ config_root }}"
+run = "mdbook serve"
