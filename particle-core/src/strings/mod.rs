@@ -6,12 +6,6 @@
 // Modules
 // ------------------------------------------------------------------------------------------------
 
-pub mod common;
-pub use common::{
-    AsStr, CheckedFromStr, InfallibleFromStr, LengthLimitedTextProperty, TextProperty,
-    UncheckedNewStr,
-};
-
 pub mod descriptions;
 pub use descriptions::{Description, HasDescription, HasDescriptionMut};
 

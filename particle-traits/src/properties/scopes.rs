@@ -1,33 +1,40 @@
 //!
-//! Particle error _scope_.
+//! Provides scope property traits.
 //!
 
-use crate::names::Name;
+use crate::properties::names::HasName;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
-pub trait Scope {
-    type Name: Name;
+/// Provides a trait for scope types.
+/// 
+pub trait Scope: HasName {}
 
-    fn scope_name(&self) -> &Self::Name;
-}
-
+/// 
+/// Provides a trait for types that have an associated scope.
+/// 
 pub trait HasScope {
-    type Name: Name;
-    type Scope: Scope<Name = Self::Name>;
+    /// The scope implementation used by the enclosing type.
+    type Scope: Scope;
 
     fn scope(&self) -> &Self::Scope;
 }
 
+/// 
+/// Provides a trait for types that have a mutable associated scope.
+/// 
 pub trait HasScopeMut: HasScope {
     fn set_scope(&mut self, scope: Self::Scope);
 }
 
+/// 
+/// Provides a trait for types that have an optional associated scope.
+/// 
 pub trait HasOptionalScope {
-    type Name: Name;
-    type Scope: Scope<Name = Self::Name>;
+    /// The scope implementation used by the enclosing type.
+    type Scope: Scope;
 
     fn is_scoped(&self) -> bool {
         self.scope().is_some()
@@ -35,6 +42,9 @@ pub trait HasOptionalScope {
     fn scope(&self) -> Option<&Self::Scope>;
 }
 
+/// 
+/// Provides a trait for types that have a mutable optional associated scope.
+/// 
 pub trait HasOptionalScopeMut: HasOptionalScope {
     fn set_scope(&mut self, scope: Self::Scope);
 
@@ -45,8 +55,12 @@ pub trait HasOptionalScopeMut: HasOptionalScope {
 // Public Types ❱ Builder Fragment
 // ------------------------------------------------------------------------------------------------
 
+///
+/// Provides a builder mix-in fragment for types that can have scopes.
+/// 
 pub trait ScopeBuilderFragment {
+    /// The scope implementation to be included in the built object.
     type Scope: Scope;
 
-    fn with_scope_named(self, scope: Self::Scope) -> Self;
+    fn with_scope(self, scope: Self::Scope) -> Self;
 }
