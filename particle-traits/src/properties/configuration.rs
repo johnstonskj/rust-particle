@@ -3,69 +3,33 @@
 //!
 
 use crate::properties::values::Value;
-use core::error::Error as CoreError;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Traits
 // ------------------------------------------------------------------------------------------------
 
-/// 
-/// Provides a trait for types that have an associated configuration.
-/// 
-pub trait HasConfiguration {
-    /// The configuration value implementation to be included in the built object.
-    type ConfigValue: Value;
-
-    fn configuration(&self) -> &Self::ConfigValue;
+has_traits! {
+    Value =>
+    "Provides a mixin trait for types that have a `configuration` property."
+    HasConfiguration { configuration }
+    "Provides a mixin trait for types that have a mutable `configuration` property."
+    HasConfigurationMut { set_configuration, configuration_mut }
 }
 
-/// 
-/// Provides a trait for types that have a mutable associated configuration.
-/// 
-pub trait HasConfigurationMut: HasConfiguration {
-    type Error: CoreError;
-
-    fn configuration_mut(&mut self) -> &mut Self::ConfigValue;
-
-    fn set_configuration(&mut self, configuration: Self::ConfigValue) -> Result<(), Self::Error>;
-}
-
-/// 
-/// Provides a trait for types that have an optional associated configuration.
-/// 
-pub trait HasOptionalConfiguration {
-    /// The configuration value implementation to be included in the built object.
-    type ConfigValue: Value;
-
-    /* const */
-    fn has_configuration(&self) -> bool;
-
-    fn configuration(&self) -> Option<&Self::ConfigValue>;
-}
-
-/// 
-/// Provides a trait for types that have mutable access to an optional associated configuration.
-/// 
-pub trait HasOptionalConfigurationMut: HasOptionalConfiguration {
-    type Error: CoreError;
-
-    fn configuration_mut(&mut self) -> Option<&mut Self::ConfigValue>;
-
-    fn set_configuration(&mut self, configuration: Self::ConfigValue) -> Result<(), Self::Error>;
-
-    fn unset_configuration(&mut self) -> Result<(), Self::Error>;
+has_traits! {
+    #[optional] Value =>
+    "Provides a mixin trait for types that have an optional `configuration` property."
+    HasOptionalConfiguration { configuration, has_configuration }
+    "Provides a mixin trait for types that have a mutable optional `configuration` property."
+    HasOptionalConfigurationMut { set_configuration, unset_configuration, configuration_mut }
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Builder Fragment
 // ------------------------------------------------------------------------------------------------
 
-///
-/// Provides a builder mix-in fragment for types that can have configuration.
-/// 
-pub trait ConfigurationBuilderFragment {
-    /// The configuration value implementation to be included in the built object.
-    type ConfigValue: Value;
-
-    fn with_configuration(self, configuration: Self::ConfigValue) -> Self;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have a `configuration` property." =>
+    ConfigurationBuilderFragment ConfigValue: Value
+        default with_configuration(configuration) {}
 }

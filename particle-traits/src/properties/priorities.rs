@@ -14,9 +14,9 @@ use core::{
 // Public Types ❱ Priority
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for priority types.
-/// 
+///
 pub trait Priority:
     HasClassifier
     + HasName
@@ -72,9 +72,9 @@ pub trait Priority:
     fn decrease_by_or(&self, levels: u32) -> Option<Self>;
 }
 
-/// 
+///
 /// Provides a trait for types that have an associated priority.
-/// 
+///
 pub trait HasPriority {
     /// The priority implementation to be included in the built object.
     type Priority: Priority;
@@ -83,9 +83,9 @@ pub trait HasPriority {
     fn current_priority(&self) -> Self::Priority;
 }
 
-/// 
+///
 /// Provides a trait for types that have a mutable associated priority.
-/// 
+///
 pub trait HasPriorityMut: HasPriority {
     fn set_priority(&mut self, priority: Self::Priority);
 
@@ -107,22 +107,14 @@ pub trait HasPriorityMut: HasPriority {
 // Public Types ❱ Builder Fragment
 // ------------------------------------------------------------------------------------------------
 
-///
-/// Provides a builder mix-in fragment for types that can have priorities.
-/// 
-pub trait PriorityBuilderFragment {
-    /// The priority implementation to be included in the built object.
-    type Priority: Priority;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have priorities." =>
+    PriorityBuilderFragment impl Priority
+        default with_priority(priority) {
 
-    fn with_priority(self, priority: Self::Priority) -> Self;
-
-    /// 
-    /// Synonym for [`with_priority`](PriorityBuilderFragment::with_priority).
-    /// 
-    fn prioritized_as(self, priority: Self::Priority) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_priority(priority)
+        fn_with! {
+            "Synonym for [`with_priority`](PriorityBuilderFragment::with_priority)." =>
+            prioritized_as(priority: Self::Priority) => with_priority
+        }
     }
 }

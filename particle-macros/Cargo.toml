@@ -1,0 +1,19 @@
+[package]
+name = "particle-macros"
+description = "Core macros for the particle component system."
+version = "0.1.0"
+readme = "README.md"
+publish = true
+
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+
+[lints]
+workspace = true

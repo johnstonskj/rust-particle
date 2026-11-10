@@ -2,6 +2,7 @@
 //! Povides property traits for structured error handling, errors codes, severites, and help URLs.
 //!
 
+use crate::properties::help::HasUrl;
 use core::{
     error::Error as CoreError,
     fmt::{Debug, Display},
@@ -13,35 +14,26 @@ use core::{
 // Public Types ❯ Error Code
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for error code types.
-/// 
+///
 pub trait ErrorCode: Clone + Copy + Debug + Display + PartialEq + Eq + Hash {}
 
-
-/// 
-/// Provides a trait for types that have an associated error code.
-/// 
-pub trait HasErrorCode {
-    type Code: ErrorCode;
-
-    fn error_code(&self) -> Self::Code;
-}
-
-/// 
-/// Provides a trait for types that have a mutable associated error code.
-/// 
-pub trait HasErrorCodeMut: HasErrorCode {
-    fn set_error_code(&mut self, code: Self::Code);
+has_traits! {
+    ErrorCode =>
+    "Provides a mixin trait for types that have an `error_code` property."
+    HasErrorCode { error_code }
+    "Provides a mixin trait for types that have a mutable `error_code` property."
+    HasErrorCodeMut { set_error_code }
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❯ Severity
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for severity types.
-/// 
+///
 pub trait Severity:
     Clone + Copy + Debug + Display + PartialEq + Eq + Hash + PartialOrd + Ord + FromStr
 {
@@ -73,75 +65,62 @@ pub trait Severity:
     }
 }
 
-/// 
-/// Provides a trait for types that have an associated severity.
-/// 
-pub trait HasSeverity {
-    type Severity: Severity;
-
-    fn severity(&self) -> Self::Severity;
-}
-
-/// 
-/// Provides a trait for types that have a mutable associated severity.
-/// 
-pub trait HasSeverityMut: HasSeverity {
-    fn set_severity(&mut self, severity: Self::Severity);
+has_traits! {
+    Severity =>
+    "Provides a mixin trait for types that have a `severity` property."
+    HasSeverity { severity }
+    "Provides a mixin trait for types that have a mutable `severity` property."
+    HasSeverityMut { set_severity }
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
- 
-/// 
-/// Provides a trait for structured error types.
-/// 
-pub trait StructuredError: CoreError + HasErrorCode + HasSeverity {
-    type Url;
 
-    fn help_url(&self) -> Option<Self::Url>;
-}
+///
+/// Provides a trait for structured error types.
+///
+pub trait StructuredError: CoreError + HasErrorCode + HasSeverity + HasUrl {}
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Builder Fragments
 // ------------------------------------------------------------------------------------------------
 
-/// 
-/// Provides a builder mix-in fragment for types that can have an error code.
-/// 
-pub trait ErrorCodeBuilderFragment {
-    type Code: ErrorCode;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have an error code." =>
+    ErrorCodeBuilderFragment Code: ErrorCode
+        default with_error_code(code) {
 
-    fn with_error_code(self, code: Self::Code) -> Self;
-    fn and_code(self, code: Self::Code) -> Self;
+        fn_with! {
+            and_code(code: Self::Code) => with_error_code
+        }
+    }
 }
 
-/// 
-/// Provides a builder mix-in fragment for types that can have a severity.
-/// 
-pub trait SeverityBuilderFragment {
-    type Severity: Severity;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have a severity." =>
+    SeverityBuilderFragment impl Severity
+        default with_severity(severity) {
 
-    fn with_severity(self, severity: Self::Severity) -> Self;
+        fn warning(self) -> Self
+        where
+            Self: Sized,
+        {
+            self.with_severity(Self::Severity::warning())
+        }
 
-    fn warning(self) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_severity(Self::Severity::warning())
-    }
+        fn error(self) -> Self
+        where
+            Self: Sized,
+        {
+            self.with_severity(Self::Severity::error())
+        }
 
-    fn error(self) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_severity(Self::Severity::error())
-    }
-
-    fn critical(self) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_severity(Self::Severity::critical())
+        fn critical(self) -> Self
+        where
+            Self: Sized,
+        {
+            self.with_severity(Self::Severity::critical())
+        }
     }
 }

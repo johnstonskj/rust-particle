@@ -1,7 +1,7 @@
 //!
 //! Provides name property traits.
 //!
-//! [`Name`] types are used as human-readable longer descriptors for objects, as such they 
+//! [`Name`] types are used as human-readable longer descriptors for objects, as such they
 //! implement `LengthLimitedTextProperty`.
 //!
 
@@ -15,9 +15,9 @@ use alloc::string::String;
 // Public Types ❱ Individual Name
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for name types.
-/// 
+///
 pub trait Name:
     AsStr + CheckedFromStr + UncheckedNewStr + Into<String> + Clone + Display + Eq
 {
@@ -27,75 +27,42 @@ pub trait Name:
 // Public Types ❱ Has Name traits
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for types that have an associated static name.
-/// 
+///
 pub trait HasStaticName {
     /* const */
     fn name(&self) -> &'static str;
 }
 
-/// 
-/// Provides a trait for types that have an associated name.
-/// 
-pub trait HasName {
-    /// The name implementation to be included in the built object.
-    type Name: Name;
-
-    /* const */
-    fn name(&self) -> &Self::Name;
+has_traits! {
+    Name =>
+    "Provides a mixin trait for types that have a `name` property."
+    HasName { name }
+    "Provides a mixin trait for types that have a mutable `name` property."
+    HasNameMut { set_name }
 }
 
-/// 
-/// Provides a trait for types that have a mutable associated name.
-/// 
-pub trait HasNameMut: HasName {
-    fn set_name(&mut self, name: Self::Name);
-}
-
-/// 
-/// Provides a trait for types that have an optional associated name.
-/// 
-pub trait HasOptionalName {
-    /// The name implementation to be included in the built object.
-    type Name: Name;
-
-    /* const */
-    fn has_name(&self) -> bool;
-
-    /* const */
-    fn name(&self) -> Option<&Self::Name>;
-}
-
-/// 
-/// Provides a trait for types that have a mutable optional associated name.
-/// 
-pub trait HasOptionalNameMut: HasOptionalName {
-    fn set_name(&mut self, name: Self::Name);
-
-    fn unset_name(&mut self);
+has_traits! {
+    #[optional] Name =>
+    "Provides a mixin trait for types that have an optional `name` property."
+    HasOptionalName { name, has_name }
+    "Provides a mixin trait for types that have a mutable optional `name` property."
+    HasOptionalNameMut { set_name, unset_name }
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Builder Fragment
 // ------------------------------------------------------------------------------------------------
 
-///
-/// Provides a builder mix-in fragment for types that can have names.
-/// 
-pub trait NameBuilderFragment {
-    /// The name implementation to be included in the built object.
-    type Name: Name;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have names." =>
+    NameBuilderFragment impl Name
+        default with_name(name) {
 
-    fn with_name(self, name: Self::Name) -> Self;
-
-    /// 
-    /// Synonym for [`with_name`](NameBuilderFragment::with_name).
-    /// 
-    fn named(self, name: Self::Name) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_name(name)
+        fn_with! {
+            "Synonym for [`with_name`](NameBuilderFragment::with_name)." =>
+            named(name: Self::Name) => with_name
+        }
     }
 }

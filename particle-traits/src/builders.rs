@@ -22,10 +22,10 @@ use core::{convert::Infallible, error::Error as CoreError};
 // Public Types ❱ Builder
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// A builder that can only be used once to construct an instance of `Output`, with the possibility
 /// of returning an error of type `Error`.
-/// 
+///
 pub trait OnceBuilder {
     /// The output type that this builder will construct.
     type Output;
@@ -38,10 +38,10 @@ pub trait OnceBuilder {
     fn build_once(self) -> Result<Self::Output, Self::Error>;
 }
 
-/// 
+///
 /// A builder that can only be used once to construct an instance of `Output`, with the guarantee
 /// that it will not return an error.
-/// 
+///
 pub trait InfallibleOnceBuilder {
     /// The output type that this builder will construct.
     type Output;
@@ -51,10 +51,10 @@ pub trait InfallibleOnceBuilder {
 
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// A builder that may be used multiple times to construct instances of `Output`, with the possibility
 /// of returning an error of type `Error`.
-/// 
+///
 pub trait Builder: OnceBuilder + Clone {
     ///
     /// Build a new instance of the type `Output`, returning `Error` if it cannot be constructed.
@@ -62,10 +62,10 @@ pub trait Builder: OnceBuilder + Clone {
     fn build(&self) -> Result<Self::Output, Self::Error>;
 }
 
-/// 
+///
 /// A builder that may be used multiple times to construct instances of `Output`, with the guarantee
 /// that it will not return an error.
-/// 
+///
 pub trait InfallibleBuilder: InfallibleOnceBuilder + Clone {
     fn build(&self) -> Self::Output;
 }
@@ -74,9 +74,9 @@ pub trait InfallibleBuilder: InfallibleOnceBuilder + Clone {
 // Public Types ❱ Has Builder
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Denotes that this type provides a builder of type [`OnceBuilder`].
-/// 
+///
 pub trait HasOnceBuilder {
     /// The output type that this builder will construct, most usually `Self`.
     type Output;
@@ -87,9 +87,9 @@ pub trait HasOnceBuilder {
     fn builder() -> Self::Builder;
 }
 
-/// 
+///
 /// Denotes that this type provides a builder of type [`InfallibleOnceBuilder`].
-/// 
+///
 pub trait HasInfallibleOnceBuilder {
     /// The output type that this builder will construct, most usually `Self`.
     type Output;
@@ -102,9 +102,9 @@ pub trait HasInfallibleOnceBuilder {
 
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Denotes that this type provides a builder of type [`Builder`].
-/// 
+///
 pub trait HasBuilder {
     /// The output type that this builder will construct, most usually `Self`.
     type Output;
@@ -115,9 +115,9 @@ pub trait HasBuilder {
     fn builder() -> Self::Builder;
 }
 
-/// 
+///
 /// Denotes that this type provides a builder of type [`InfallibleBuilder`].
-/// 
+///
 pub trait HasInfallibleBuilder {
     /// The output type that this builder will construct, most usually `Self`.
     type Output;

@@ -6,15 +6,14 @@ use crate::{
     builders::Builder,
     properties::{
         identifiers::HasIdentifier,
-        names::{HasName, Name, NameBuilderFragment},
+        names::{HasName, NameBuilderFragment},
     },
     strings::UncheckedNewStr,
-    validation::HasValidation,
+    validation::Validatable,
 };
 #[cfg(not(feature = "std"))]
 use alloc::{format, string::String};
 use core::{
-    error::Error as CoreError,
     fmt::{Debug, Display},
     hash::Hash,
 };
@@ -23,9 +22,9 @@ use core::{
 // Public Types ❱  State / Set
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for state types.
-/// 
+///
 pub trait State:
     HasIdentifier + HasName + Clone + Debug + PartialEq + Eq + Hash + PartialOrd + Ord
 {
@@ -61,8 +60,8 @@ pub trait State:
 
 ///
 /// Provides a trait for state set types.
-/// 
-pub trait StateSet: HasValidation + Clone + Debug + PartialEq + Eq + PartialOrd + Ord {
+///
+pub trait StateSet: Validatable + Clone + Debug + PartialEq + Eq + PartialOrd + Ord {
     /// The state implementation used by the enclosing type.
     type State: State;
 
@@ -113,9 +112,9 @@ pub trait StateSet: HasValidation + Clone + Debug + PartialEq + Eq + PartialOrd 
 // Public Types ❱ State Kinds
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for state kind types.
-/// 
+///
 pub trait StateKind: Clone + Copy + Debug + Default + Display + PartialEq + Eq + Hash {
     fn initial() -> Self;
     fn is_initial(&self) -> bool;
@@ -154,48 +153,25 @@ pub trait StateKind: Clone + Copy + Debug + Default + Display + PartialEq + Eq +
 // Public Types ❱ Has State / Set
 // ------------------------------------------------------------------------------------------------
 
-/// 
-/// Provides a trait for types that have an associated state.
-/// 
-pub trait HasState {
-    /// The state implementation used by the enclosing type.
-    type State: State;
-
-    fn current_state(&self) -> &Self::State;
+has_traits! {
+    State =>
+    "Provides a mixin trait for types that have a `state` property."
+    HasState { state }
+    "Provides a mixin trait for types that have a mutable `state` property."
+    HasStateMut { set_state }
 }
 
-/// 
-/// Provides a trait for types that have a mutable associated state.
-/// 
-pub trait HasStateMut: HasState {
-    /// The error type returned when setting the state fails.
-    type Error: CoreError;
-
-    fn set_state<N: Name>(&mut self, state: Self::State) -> Result<(), Self::Error>;
+has_traits! {
+    #[optional] State =>
+    "Provides a mixin trait for types that have an optional `state` property."
+    HasOptionalState { state, has_state }
+    "Provides a mixin trait for types that have a mutable optional `state` property."
+    HasOptionalStateMut { set_state, unset_state }
 }
 
-/// 
-/// Provides a trait for types that have an optional associated state.
-/// 
-pub trait HasOptionalState {
-    /// The state implementation used by the enclosing type.
-    type State: State;
-
-    fn current_state(&self) -> Option<&Self::State>;
-}
-
-/// 
-/// Provides a trait for types that have a mutable optional associated state.
-/// 
-pub trait HasOptionalStateMut: HasOptionalState {
-    fn set_state(&mut self, state: Self::State);
-
-    fn unset_state(&mut self);
-}
-
-/// 
+///
 /// Provides a trait for types that have a set of potential states.
-/// 
+///
 pub trait HasPotentialStates {
     /// The state implementation used by the enclosing type.
     type State: State;
@@ -209,9 +185,9 @@ pub trait HasPotentialStates {
 // Public Types ❱ Builders and  Fragments
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a builder trait for state types.
-/// 
+///
 pub trait StateBuilder<T: State>:
     Builder<Output = T> + NameBuilderFragment<Name = <T as HasName>::Name>
 {
@@ -295,22 +271,14 @@ pub trait StateBuilder<T: State>:
     }
 }
 
-///
-/// Provides a builder mix-in fragment for types that can have states.
-/// 
-pub trait StateBuilderFragment {
-    /// The state implementation to be included in the built object.
-    type State: State;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have states." =>
+    StateBuilderFragment impl State
+        default with_state(state) {
 
-    fn with_state(self, state: Self::State) -> Self;
-
-    /// 
-    /// Synonym for [`with_state`](StateBuilderFragment::with_state).
-    /// 
-    fn in_state(self, state: Self::State) -> Self
-    where
-        Self: Sized,
-    {
-        self.with_state(state)
+        fn_with! {
+            "Synonym for [`with_state`](StateBuilderFragment::with_state)." =>
+            in_state(state: Self::State) => with_state
+        }
     }
 }

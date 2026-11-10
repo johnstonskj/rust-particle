@@ -3,12 +3,11 @@
 //! properties.
 //!
 
+use crate::properties::identifiers::Identifier;
 use core::{convert::Infallible, fmt::Display, hash::Hash, str::FromStr};
 
 #[cfg(not(feature = "std"))]
-use alloc::{
-    string::{String},
-};
+use alloc::string::String;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ String Behaviors
@@ -75,19 +74,52 @@ pub trait StringLike:
 {
 }
 
+/// 
+/// Provides a trait for language identifier types.
+/// 
+pub trait Language: Identifier {}
+
+
+has_traits! {
+    "The language identifier concrete type." Language =>
+    "Provides a mixin trait for types that have a `language` property."
+    HasLanguage { language }
+    "Provides a mixin trait for types that have a mutable `language` property."
+    HasLanguageMut { set_language }
+}
+
+has_traits! {
+    #[optional] "The language identifier concrete type." Language =>
+    "Provides a mixin trait for types that have an optional `language` property."
+    HasOptionalLanguage { language, has_language }
+    "Provides a mixin trait for types that have a mutable optional `language` property."
+    HasOptionalLanguageMut { set_language, has_language }
+}
+
+///
+/// Provides a trait for string-like types that have an optional associated language identifier.
+/// 
+pub trait LanguageString: HasOptionalLanguage {
+    /// The inner string-like text type for this type's content.
+    type Text: StringLike;
+
+    /// Returns the text content of the instance, as a reference to the associated `Text` type.
+    fn text(&self) -> &Self::Text;
+}
+
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ String Property Helpers
 // ------------------------------------------------------------------------------------------------
 
 ///
 /// Provides a trait for types that have a length constraint on their string representation.
-/// 
+///
 /// The `is_valid_len` method checks if a given string's length falls within the defined range.
-/// 
+///
 /// By default, the minimum length is `usize::MIN` and the maximum length is `usize::MAX`.
 /// Implementors can override the default minimum and maximum lengths by specifying the `MIN_LENGTH`
 /// and `MAX_LENGTH` associated constants.
-/// 
+///
 pub trait LengthLimitedTextProperty: CheckedFromStr {
     const MIN_LENGTH: usize = usize::MIN;
     const MAX_LENGTH: usize = usize::MAX;

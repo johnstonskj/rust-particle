@@ -8,75 +8,51 @@ use core::{fmt::Debug, hash::Hash};
 // Public Types ❱ Value Traits
 // ------------------------------------------------------------------------------------------------
 
-/// 
+///
 /// Provides a trait for value types.
-/// 
+///
 pub trait Value: Clone + Debug + PartialEq + Eq + Hash + PartialOrd + Ord {}
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Has Value traits
 // ------------------------------------------------------------------------------------------------
 
-/// 
-/// Provides a trait for types that have an associated value.
-/// 
-pub trait HasValue {
-    /// The value implementation used by the enclosing type.
-    type Value: Value;
-
-    fn get(&self) -> &Self::Value;
+has_traits! {
+    Value =>
+    "Provides a mixin trait for types that have a `value` property."
+    HasValue { value}
+    "Provides a mixin trait for types that have a mutable `value` property."
+    HasValueMut { set_value }
 }
 
-/// 
-/// Provides a trait for types that have a mutable associated value.
-/// 
-pub trait HasValueMut: HasValue {
-    fn get_mut(&mut self) -> &mut Self::Value;
-
-    fn set(&mut self, value: Self::Value);
+has_traits! {
+    #[optional] Value =>
+    "Provides a mixin trait for types that have an optional `value` property."
+    HasOptionalValue { value, has_value }
+    "Provides a mixin trait for types that have a mutable optional `value` property."
+    HasOptionalValueMut { set_value, unset_value, value_mut }
 }
 
-/// 
-/// Provides a trait for types that have an optional associated value.
-/// 
-pub trait HasOptionalValue {
-    /// The value implementation used by the enclosing type.
-    type Value: Value;
-
-    fn get(&self) -> Option<&Self::Value>;
-}
-
-/// 
-/// Provides a trait for types that have a mutable optional associated value.
-/// 
-pub trait HasOptionalValueMut: HasOptionalValue {
-    fn get_mut(&mut self) -> Option<&mut Self::Value>;
-
-    fn set(&mut self, value: Self::Value);
-
-    fn unset(&mut self);
+has_traits! {
+    #[iter] Value =>
+    "Provides a mixin trait for types that have a `values` property."
+    HasValues { values, has_values, values_count }
+    "Provides a mixin trait for types that have a mutable `values` property."
+    HasValuesMut { set_values, add_value, extend_values, remove_value, clear_values }
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Builder Fragment
 // ------------------------------------------------------------------------------------------------
 
-///
-/// Provides a builder mix-in fragment for types that can have classifiers.
-/// 
-pub trait ValueBuilderFragment {
-    /// The value implementation to be included in the built object.
-    type Value: Value;
+builder_fragment! {
+    "Provides a builder mix-in fragment for types that can have a `value` property." =>
+    ValueBuilderFragment impl Value
+        default with_value(value) {
 
-    fn with_value(self, value: Self::Value) -> Self;
-    
-    /// 
-    /// Synonym for [`with_value`](ValueBuilderFragment::with_value).
-    /// 
-    fn with(self, value: Self::Value) -> Self 
-    where
-        Self: Sized,
-    {
-        self.with_value(value)
+        fn_with! {
+            "Synonym for [`with_value`](ValueBuilderFragment::with_value)." =>
+            with(value: Self::Value) => with_value
+        }
     }
 }
