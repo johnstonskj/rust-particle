@@ -78,7 +78,7 @@ pub trait CommandOnceWith {
     type Value;
 
     /// Executes this command, with the provided argument reference, consuming self.
-    fn execute_once_with(self, value: &Self::Value) -> Result<Self::Output, Self::Error>;
+    fn execute_once_with(self, value: Self::Value) -> Result<Self::Output, Self::Error>;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ pub trait CommandMut: CommandOnce {
 ///
 pub trait CommandMutWith: CommandOnceWith {
     /// Executes this command, with the provided argument reference, mutably borrowing self.
-    fn execute_mut_with(&mut self, value: &Self::Value) -> Result<Self::Output, Self::Error>;
+    fn execute_mut_with(&mut self, value: Self::Value) -> Result<Self::Output, Self::Error>;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ pub trait Command: CommandMut {
 ///
 pub trait CommandWith: CommandOnceWith {
     /// Executes this command, with the provided argument reference, immutably borrowing self.
-    fn execute_with(&self, value: &Self::Value) -> Result<Self::Output, Self::Error>;
+    fn execute_with(&self, value: Self::Value) -> Result<Self::Output, Self::Error>;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -157,20 +157,6 @@ where
         self()
     }
 }
-
-// FIXME: impl<F, V, O, E> CommandOnceWith for F
-// FIXME: where
-// FIXME:     E: CoreError,
-// FIXME:     F: FnOnce(V) -> Result<O, E>,
-// FIXME: {
-// FIXME:     type Output = O;
-// FIXME:     type Error = E;
-// FIXME:     type Value = V;
-// FIXME:
-// FIXME:     fn execute_with(self, value: Self::Value) -> Result<Self::Output, Self::Error> {
-// FIXME:         self(value)
-// FIXME:     }
-// FIXME: }
 
 // ------------------------------------------------------------------------------------------------
 
