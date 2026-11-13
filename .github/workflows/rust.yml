@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -76,7 +76,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -140,7 +140,7 @@ jobs:
         rust: ["stable"]
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -167,7 +167,7 @@ jobs:
         rust: ["stable"]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -182,7 +182,7 @@ jobs:
           args: --all-features -- --test-threads 1
 
       - name: Upload to codecov.io
-        uses: codecov/codecov-action@v5.5.2
+        uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -199,7 +199,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -222,7 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
@@ -246,7 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Install Rust
       uses: actions-rs/toolchain@v1
