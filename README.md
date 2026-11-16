@@ -6,6 +6,10 @@ Particle core traits and errors only.
 [![MIT License](https://img.shields.io/badge/license-mit-118811.svg)](https://opensource.org/license/mit)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rust-particle.svg)](<https://github.com/johnstonskj/rust-particle/stargazers>)
 
+[![Rust Workflow](https://github.com/johnstonskj/rust-particle/actions/workflows/rust.yml/badge.svg)](<https://github.com/johnstonskj/rust-particle/actions/workflows/rust.yml>)
+[![Security Audit Workflow](https://github.com/johnstonskj/rust-particle/actions/workflows/security-audit.yml/badge.svg)](<https://github.com/johnstonskj/rust-particle/actions/workflows/security-audit.yml>)
+[![Coverage Status](https://codecov.io/github/johnstonskj/rust-particle/graph/badge.svg?token=1HGN6M4KIT)](<https://codecov.io/github/johnstonskj/rust-particle>)
+
 Add a longer description here.
 
 ## Example
