@@ -52,10 +52,31 @@ pub trait InfallibleOnceBuilder {
 // ------------------------------------------------------------------------------------------------
 
 ///
+/// A builder that can be called repeatedly and may mutate state to construct instances of `Output`,
+/// with the possibility of returning an error of type `Error`.
+///
+pub trait MutBuilder: OnceBuilder + Clone {
+    ///
+    /// Build a new instance of the type `Output`, returning `Error` if it cannot be constructed.
+    ///
+    fn build_mut(&mut self) -> Result<Self::Output, Self::Error>;
+}
+
+///
+/// A builder that can be called repeatedly and may mutate state to construct instances of `Output`,
+/// with the guarantee that it will not return an error.
+///
+pub trait InfallibleMutBuilder: InfallibleOnceBuilder + Clone {
+    fn build_mut(&mut self) -> Self::Output;
+}
+
+// ------------------------------------------------------------------------------------------------
+
+///
 /// A builder that may be used multiple times to construct instances of `Output`, with the possibility
 /// of returning an error of type `Error`.
 ///
-pub trait Builder: OnceBuilder + Clone {
+pub trait Builder: MutBuilder + Clone {
     ///
     /// Build a new instance of the type `Output`, returning `Error` if it cannot be constructed.
     ///
@@ -66,7 +87,7 @@ pub trait Builder: OnceBuilder + Clone {
 /// A builder that may be used multiple times to construct instances of `Output`, with the guarantee
 /// that it will not return an error.
 ///
-pub trait InfallibleBuilder: InfallibleOnceBuilder + Clone {
+pub trait InfallibleBuilder: InfallibleMutBuilder + Clone {
     fn build(&self) -> Self::Output;
 }
 
@@ -96,6 +117,34 @@ pub trait HasInfallibleOnceBuilder {
     /// The builder type used to construct instances of `Output`. Note, the builder returned may
     /// **only** be used once, and **does not** return errors during construction.
     type Builder: InfallibleOnceBuilder<Output = Self::Output>;
+
+    fn builder() -> Self::Builder;
+}
+
+// ------------------------------------------------------------------------------------------------
+
+///
+/// Denotes that this type provides a builder of type [`Builder`].
+///
+pub trait HasMutBuilder {
+    /// The output type that this builder will construct, most usually `Self`.
+    type Output;
+    /// The builder type used to construct instances of `Output`. Note, the builder returned may
+    /// be used more than once, and **may** return errors during construction.
+    type Builder: MutBuilder<Output = Self::Output>;
+
+    fn builder() -> Self::Builder;
+}
+
+///
+/// Denotes that this type provides a builder of type [`InfallibleBuilder`].
+///
+pub trait HasInfallibleMutBuilder {
+    /// The output type that this builder will construct, most usually `Self`.
+    type Output;
+    /// The builder type used to construct instances of `Output`. Note, the builder returned may
+    /// be used more than once, and **does not** return errors during construction.
+    type Builder: InfallibleMutBuilder<Output = Self::Output>;
 
     fn builder() -> Self::Builder;
 }
