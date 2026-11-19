@@ -7,7 +7,12 @@ lockfile = true
 [tools]
 rust = { version = "latest", components = [
     "rust-src",
+    "rust-analyzer",
     "clippy-preview",
+], targets = [
+    "thumbv7m-none-eabi",
+    "wasm32-wasip1",
+    "wasm32-unknown-unknown",
 ], mr_boxington = true }
 
 mr-boxington = "latest"

@@ -5,11 +5,11 @@
 //! implement `LengthLimitedTextProperty`.
 //!
 
-use crate::strings::{AsStr, CheckedFromStr, UncheckedNewStr};
-use core::fmt::Display;
+prelude!(rust_2024);
 
-#[cfg(not(feature = "std"))]
+use crate::strings::{AsStr, CheckedFromStr, UncheckedNewStr};
 use alloc::string::String;
+use core::fmt::Display;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Individual Name

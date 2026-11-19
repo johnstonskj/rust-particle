@@ -2,6 +2,8 @@
 //! Provides simple state (not state machine) property traits.
 //!
 
+prelude!(rust_2024);
+
 use crate::{
     builders::Builder,
     properties::{
@@ -11,7 +13,6 @@ use crate::{
     strings::UncheckedNewStr,
     validation::Validatable,
 };
-#[cfg(not(feature = "std"))]
 use alloc::{format, string::String};
 use core::{
     fmt::{Debug, Display},

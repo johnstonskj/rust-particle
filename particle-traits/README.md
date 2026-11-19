@@ -9,14 +9,14 @@ Core traits for the particle component system.
 
 Part of the [Particle project](https://rust-particle.github.io).
 
-Note that this crate is *by default* `no_std` and has
+Note that this crate is `no_std` and has zero dependencies.
 
 ## Content
 
 | Module          | Types                                                                                                                                                                                                                                                                 |
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| builders        | `Builder`, `InfallibleBuilder`, `HasBuilder`, `HasInfallibleBuilder`                                                                                                                                                                                                  |
-| commands        | `CommandOnce`, `CommandOnceWith`, `Command`, `CommandWith`, `CommandMut`, `CommandMutWith`                                                                                                                                                                            |
+| builders        | `OnceBuilder`, `InfallibleOnceBuilder`, `HasOnceBuilder`, `HasInfallibleOnceBuilder`, `MutBuilder`, `InfallibleMutBuilder`, `HasMutBuilder`, `HasInfallibleMutBuilder`, `Builder`, `InfallibleBuilder`, `HasBuilder`, `HasInfallibleBuilder`                          |
+| commands        | `CommandOnce`, `CommandOnceWith`, `CommandMut`, `CommandMutWith`, `Command`, `CommandWith`                                                                                                                                                                            |
 | properties      | `Singleton`, `Opaque`,                                                                                                                                                                                                                                                |
 | + classifiers   | `Classifier`, `HasClassifier`, `HasClassifierMut`, `HasClassifiers`, `HasClassifiersMut`                                                                                                                                                                              |
 | + configuration | `HasConfiguration`, `HasConfigurationMut`, `HasOptionalConfiguration`, `HasOptionalConfigurationMut`, `ConfigurationBuilderFragment`                                                                                                                                  |

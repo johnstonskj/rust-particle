@@ -3,11 +3,11 @@
 //! properties.
 //!
 
-use crate::properties::identifiers::Identifier;
-use core::{convert::Infallible, fmt::Display, hash::Hash, str::FromStr};
+prelude!(rust_2024);
 
-#[cfg(not(feature = "std"))]
+use crate::properties::identifiers::Identifier;
 use alloc::string::String;
+use core::{convert::Infallible, fmt::Display, hash::Hash, str::FromStr};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ String Behaviors
@@ -74,11 +74,10 @@ pub trait StringLike:
 {
 }
 
-/// 
+///
 /// Provides a trait for language identifier types.
-/// 
+///
 pub trait Language: Identifier {}
-
 
 has_traits! {
     "The language identifier concrete type." Language =>
@@ -98,7 +97,7 @@ has_traits! {
 
 ///
 /// Provides a trait for string-like types that have an optional associated language identifier.
-/// 
+///
 pub trait LanguageString: HasOptionalLanguage {
     /// The inner string-like text type for this type's content.
     type Text: StringLike;

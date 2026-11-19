@@ -2,6 +2,8 @@
 //! Provides priority property traits.
 //!
 
+prelude!(rust_2024);
+
 use crate::properties::{classifiers::HasClassifier, names::HasName};
 use core::{
     fmt::{Debug, Display},

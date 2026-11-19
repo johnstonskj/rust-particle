@@ -5,6 +5,8 @@
 //! implement `LengthLimitedTextProperty`.
 //!
 
+prelude!(rust_2024);
+
 use core::fmt::Display;
 
 // ------------------------------------------------------------------------------------------------

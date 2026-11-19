@@ -2,6 +2,8 @@
 //! Povides property traits for structured error handling, errors codes, severites, and help URLs.
 //!
 
+prelude!(rust_2024);
+
 use crate::properties::help::HasUrl;
 use core::{
     error::Error as CoreError,

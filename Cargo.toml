@@ -4,10 +4,10 @@ resolver = "3"
 members = ["particle", "particle-macros", "particle-traits"]
 
 [workspace.dependencies]
-document-features = "0.2"
-pastey = { version = "0.2" }
-serde = { version = "1.0", default-features = false, features = ["derive"] }
-strum = { version = "0.28", features = ["derive"] }
+# document-features = "0.2"
+# pastey = { version = "0.2" }
+# serde = { version = "1.0", default-features = false, features = ["derive"] }
+# strum = { version = "0.28", features = ["derive"] }
 
 
 [workspace.package]

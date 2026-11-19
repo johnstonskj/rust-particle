@@ -2,6 +2,8 @@
 //! Provides value property traits.
 //!
 
+prelude!(rust_2024);
+
 use core::{fmt::Debug, hash::Hash};
 
 // ------------------------------------------------------------------------------------------------

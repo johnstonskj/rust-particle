@@ -1,0 +1,3 @@
+[build]
+target = ["thumbv7m-none-eabi", "wasm32-wasip1", "wasm32-unknown-unknown"]
+

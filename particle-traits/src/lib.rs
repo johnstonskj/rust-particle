@@ -5,14 +5,23 @@
 //!
 //! # Feature flags
 //!
-//! * **alloc** (*enabled by default*) — Implies the use of the `alloc` crate, and the absence of
-//!   the standard library.
 //! * **doc-macros** — **if** enabled during rustdoc generation, internal macros **will be** exported
 //!   for documentation purposes. This is useful for understanding internal implementation details.
 //!
+#![no_std]
 
-#[cfg(not(feature = "std"))]
 extern crate alloc;
+
+// ------------------------------------------------------------------------------------------------
+// Meta-Macro
+// ------------------------------------------------------------------------------------------------
+
+macro_rules! prelude {
+    ($edition:ident) => {
+        #[cfg(target_os = "none")]
+        use core::prelude::$edition::*;
+    };
+}
 
 // ------------------------------------------------------------------------------------------------
 // Modules

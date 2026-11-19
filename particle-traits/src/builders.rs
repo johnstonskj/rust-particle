@@ -16,6 +16,8 @@
 //! TBD
 //!
 
+prelude!(rust_2024);
+
 use core::{convert::Infallible, error::Error as CoreError};
 
 // ------------------------------------------------------------------------------------------------
@@ -105,7 +107,7 @@ pub trait HasOnceBuilder {
     /// **only** be used once, and **may** return errors during construction.
     type Builder: OnceBuilder<Output = Self::Output>;
 
-    fn builder() -> Self::Builder;
+    fn once_builder() -> Self::Builder;
 }
 
 ///
@@ -118,7 +120,7 @@ pub trait HasInfallibleOnceBuilder {
     /// **only** be used once, and **does not** return errors during construction.
     type Builder: InfallibleOnceBuilder<Output = Self::Output>;
 
-    fn builder() -> Self::Builder;
+    fn once_builder() -> Self::Builder;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -133,7 +135,7 @@ pub trait HasMutBuilder {
     /// be used more than once, and **may** return errors during construction.
     type Builder: MutBuilder<Output = Self::Output>;
 
-    fn builder() -> Self::Builder;
+    fn mut_builder() -> Self::Builder;
 }
 
 ///
@@ -146,7 +148,7 @@ pub trait HasInfallibleMutBuilder {
     /// be used more than once, and **does not** return errors during construction.
     type Builder: InfallibleMutBuilder<Output = Self::Output>;
 
-    fn builder() -> Self::Builder;
+    fn mut_builder() -> Self::Builder;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -190,6 +192,15 @@ where
 
     fn build_once(self) -> Result<Self::Output, Self::Error> {
         Ok(self.build_once())
+    }
+}
+
+impl<T, O> MutBuilder for T
+where
+    T: InfallibleMutBuilder<Output = O>,
+{
+    fn build_mut(&mut self) -> Result<Self::Output, Self::Error> {
+        Ok(self.build_mut())
     }
 }
 

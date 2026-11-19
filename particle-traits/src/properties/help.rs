@@ -2,6 +2,8 @@
 //! Povides property traits for help-related metadata.
 //!
 
+prelude!(rust_2024);
+
 use crate::{properties::identifiers::HasIdentifier, strings::LanguageString};
 use core::fmt::Display;
 
@@ -11,7 +13,7 @@ use core::fmt::Display;
 
 ///
 /// The core traits required of a URL type.
-/// 
+///
 pub trait Url: Clone + Display + Eq {}
 
 has_traits! {
@@ -24,8 +26,8 @@ has_traits! {
 
 ///
 /// Provides a trait for structured help message types.
-/// 
-/// A help message is expected to have an associated identifier, should be localized, and 
+///
+/// A help message is expected to have an associated identifier, should be localized, and
 /// optionally have an associated URL for more information.
-/// 
+///
 pub trait HelpMessage: LanguageString + HasIdentifier + HasUrl {}

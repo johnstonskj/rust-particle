@@ -2,7 +2,6 @@
 name = "particle-macros"
 description = "Core macros for the particle component system."
 version = "0.1.0"
-readme = "README.md"
 publish = true
 
 edition.workspace = true

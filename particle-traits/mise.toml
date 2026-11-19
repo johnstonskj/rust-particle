@@ -17,6 +17,15 @@ extends = "lint:format:check"
 [tasks.build]
 extends = "build"
 
+[tasks."build:no-std"]
+description = "Build against no-std targets"
+alias = "no-std"
+run = [
+    "cargo build --lib --target thumbv7m-none-eabi",
+    "cargo build --all-targets --target wasm32-wasip1",
+    "cargo build --all-targets --target wasm32-unknown-unknown",
+]
+
 [tasks.clean]
 extends = "clean"
 

@@ -7,9 +7,9 @@
 //! system, both as an identifier path but also as a unique instance within the system.
 //!
 
-use crate::properties::{Singleton, identifiers::HasIdentifier};
+prelude!(rust_2024);
 
-#[cfg(not(feature = "std"))]
+use crate::properties::{Singleton, identifiers::HasIdentifier};
 use alloc::{vec, vec::Vec};
 
 // ------------------------------------------------------------------------------------------------

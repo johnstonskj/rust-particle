@@ -4,6 +4,8 @@
 //! [`Identifier`] types are used unique identifiers for objects.
 //!
 
+prelude!(rust_2024);
+
 use crate::strings::{AsStr, CheckedFromStr, LengthLimitedTextProperty};
 use core::{fmt::Display, iter};
 

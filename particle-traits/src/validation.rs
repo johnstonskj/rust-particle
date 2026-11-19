@@ -2,125 +2,97 @@
 //! Provides validation property, and validator object, traits.
 //!
 
-use crate::properties::{descriptions::HasDescription, names::HasName};
-use core::error::Error as CoreError;
+prelude!(rust_2024);
 
-#[cfg(not(feature = "std"))]
-use alloc::{rc::Rc, vec::Vec};
-
-#[cfg(feature = "std")]
-use std::rc::Rc;
+use crate::properties::{
+    classifiers::HasClassifier, errors::HasSeverity, identifiers::HasIdentifier,
+};
+use core::{error::Error as CoreError, fmt::Display};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Validation
 // ------------------------------------------------------------------------------------------------
 
 ///
-/// A Validator is responsible for validating *subjects* against a set of *validation rules*.
+/// A Validator is responsible for validating *subjects* and returning validation results. Results
+/// take the form of a sequence of issues, each representing a specific validation problem.
 ///
-/// Validators are typically associated with a specific type of subject and a set of rules that
-/// define valid states for that subject.
+/// Validators are typically associated with a specific type of subject.
 ///
-pub trait Validator: HasName {
-    /// The rule group implementation used by the enclosing type.
-    type Group: RuleGroup<Owner = Self, Rule = Self::Rule>;
-    /// The rule implementation used by the enclosing type.
-    type Rule: Rule<Group = Self::Group>;
+pub trait Validator {
+    /// The type of subject that this validator can validate.
     type Subject;
     /// The error type returned when validation fails.
     type Error: CoreError;
+    /// The type of issue returned when a validation problem is encountered.
+    type Issue: Issue;
 
-    fn validate(&self, subject: &Self::Subject) -> Result<(), Self::Error>;
-
-    fn validate_with_filter(
+    /// Called to validate the given subject and return any validation issues encountered.
+    fn validate(
         &self,
         subject: &Self::Subject,
-        filters: &[RuleFilter<Self::Group, Self::Rule>],
-    ) -> Result<(), Self::Error>;
+    ) -> Result<impl Iterator<Item = Self::Issue>, Self::Error>;
 
-    fn groups(&self) -> impl Iterator<Item = &Rc<Self::Rule>>;
-    fn all_rules(&self) -> impl Iterator<Item = &Rc<Self::Rule>>;
+    /// Returns `true` if the given subject is valid according to the same rules as the method
+    /// [`validate`], else `false`.
+    fn is_valid(&self, subject: &Self::Subject) -> bool;
 }
 
 ///
-/// A RuleGroup represents a collection of validation rules that belong to a specific validator.
+/// Provides a trait for types that rather than being validated externally, can validate themselves.
 ///
-pub trait RuleGroup: HasName + HasDescription {
-    /// The validator implementation used as the owner of this rule group.
-    type Owner: Validator<Group = Self>;
-    /// The rule implementation used as members of this rule group.
+pub trait Validatable {
+    /// The error type returned when validation fails.
+    type Error: CoreError;
+    type Issue: Issue;
+
+    fn validate(&self) -> Result<impl Iterator<Item = Self::Issue>, Self::Error>;
+
+    /// Returns `true` if the this subject is valid according to the same rules as the method
+    /// [`validate`], else `false`.
+    fn is_valid(&self) -> bool;
+}
+
+// ------------------------------------------------------------------------------------------------
+// Public Types ❱ Issues
+// ------------------------------------------------------------------------------------------------
+
+///
+/// An issue reports a specific problem encountered during the validation process.
+///
+/// Issues, like errors, have identifiers so that they may be easily identified and referenced. They
+/// also have severities to indicate the importance, or impact, of the issue.
+///
+pub trait Issue: Display + HasIdentifier + HasSeverity {}
+
+///
+/// This extension to [`Issue`] adds the ability to return the rules referenced by the issue.
+///
+pub trait IssueWithRuleReferences: Issue {
     type Rule: Rule;
 
-    fn rules(&self) -> impl Iterator<Item = &Rc<Self::Rule>>;
+    fn referenced_rules(&self) -> impl Iterator<Item = &Self::Rule>;
 }
 
 ///
-/// A Rule represents a single validation rule within a rule group.
+/// A rule represents some stipulation or condition that must be satisfied for validation to
+/// succeed. An issue is typically reported when when one or more rules are violated.
 ///
-pub trait Rule: HasName + HasDescription {
-    /// The group implementation in which this rule belongs.
-    type Group: RuleGroup;
-
-    fn in_group(&self) -> Option<Rc<Self::Group>>;
-}
-
-///
-/// Represents a filter over a set of validation rules, and the action to be taken on those rules.
-///
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct RuleFilter<G: RuleGroup<Rule = R>, R: Rule<Group = G>> {
-    target: TargetRules<G, R>,
-    action: Action,
-}
-
-///
-/// Determines the outcome of a [`TargetRules`] evaluation.
-///
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub enum Action {
-    Allow,
-    Warn,
-    Deny,
-}
-
-///
-/// Specifies the target rules for a rule filter action.
-///
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum TargetRules<G: RuleGroup<Rule = R>, R: Rule<Group = G>> {
-    All,
-    Group(Vec<Rc<G>>),
-    Rule(Vec<Rc<R>>),
-}
+pub trait Rule: Display + HasClassifier {}
 
 // ------------------------------------------------------------------------------------------------
 // Public Types ❱ Has Validation
 // ------------------------------------------------------------------------------------------------
 
 ///
-/// Provides a trait for types that have validation capabilities.
-///
-pub trait Validatable {
-    /// The error type returned when validation fails.
-    type Error: CoreError;
-
-    // `false` option (in simple).
-    fn is_valid(&self) -> bool;
-    fn validate(&self) -> Result<(), Self::Error>;
-}
-
-///
 /// Provides a trait for types that have an associated validator.
 ///
 pub trait HasValidator {
-    /// The group implementation used by the enclosing type.
-    type Group: RuleGroup<Owner = Self, Rule = Self::Rule>;
-    /// The rule implementation used by the enclosing type.
-    type Rule: Rule<Group = Self::Group>;
+    type Subject;
     /// The error type returned when validation fails.
     type Error: CoreError;
     /// The validator implementation used by the enclosing type.
-    type Validator: Validator<Group = Self::Group, Rule = Self::Rule, Subject = Self, Error = Self::Error>;
+    type Validator: Validator<Subject = Self, Error = Self::Error>;
 
     fn validator(&self) -> &Self::Validator;
 }
@@ -136,14 +108,11 @@ pub trait HasValidatorMut: HasValidator {
 /// Provides a trait for types that have an optional associated validator.
 ///
 pub trait HasOptionalValidator {
-    /// The group implementation used by the enclosing type.
-    type Group: RuleGroup<Owner = Self, Rule = Self::Rule>;
-    /// The rule implementation used by the enclosing type.
-    type Rule: Rule<Group = Self::Group>;
+    type Subject;
     /// The error type returned when validation fails.
     type Error: CoreError;
     /// The validator implementation used by the enclosing type.
-    type Validator: Validator<Group = Self::Group, Rule = Self::Rule, Subject = Self, Error = Self::Error>;
+    type Validator: Validator<Subject = Self, Error = Self::Error>;
 
     fn validator(&self) -> Option<&Self::Validator>;
 }
