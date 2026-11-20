@@ -18,7 +18,7 @@ rust = { version = "latest", components = [
 mr-boxington = "latest"
 watchexec = "latest"
 "cargo:bacon" = "latest"
-#"cargo:cargo-edit" = "latest"
+"cargo:cargo-edit" = "latest"
 
 [task_templates."lint:check"]
 description = "Check the code for any linting issues using cargo check"
