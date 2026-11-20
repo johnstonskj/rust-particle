@@ -165,7 +165,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v2
 
       - name: Generate documentation
-        run: cargo rustdoc --workspace --all-features --no-deps
+        run: cargo doc --workspace --all-features --no-deps
 
   rustfmt:
     name: Rustfmt
