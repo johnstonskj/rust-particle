@@ -52,7 +52,7 @@ pub trait Validator {
 
     ///
     /// Returns `true` if the given subject is valid according to the same rules as the method
-    /// [`validate`], else `false`.
+    /// `validate`, else `false`.
     ///
     fn is_valid(&self, subject: &Self::Subject) -> bool {
         self.validate(subject).is_ok()
@@ -78,7 +78,7 @@ pub trait Validatable {
 
     ///
     /// Returns `true` if this subject is valid according to the same rules as the method
-    /// [`validate`], else `false`.
+    /// `validate`, else `false`.
     ///
     fn is_valid(&self) -> bool {
         self.validate().is_ok()
