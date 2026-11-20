@@ -14,7 +14,7 @@ std = ["alloc"]
 alloc = []
 
 [dependencies]
-particle-traits = { version = "0.1.0", path = "../particle-traits" }
+# particle-traits = { version = "0.1", path = "../particle-traits" }
 
 [lints]
 workspace = true
