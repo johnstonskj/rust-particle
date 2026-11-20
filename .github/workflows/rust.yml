@@ -3,18 +3,18 @@ name: Rust build and test
 on:
   pull_request:
     paths:
-    - '**'
-    - '!/*.md'
-    - "!/LICENSE*"
+      - "**"
+      - "!/*.md"
+      - "!/LICENSE*"
 
   push:
     paths:
-    - '**'
-    - '!/*.md'
-    - "!/LICENSE*"
-    
+      - "**"
+      - "!/*.md"
+      - "!/LICENSE*"
+
   schedule:
-  - cron: '12 12 12 * *'
+    - cron: "12 12 12 * *"
 
 env:
   CARGO_TERM_COLOR: always
@@ -27,25 +27,24 @@ jobs:
     needs: [test, docs]
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-        
-    - uses: Swatinem/rust-cache@v2
-      
-    - name: Check publish
-      uses: actions-rs/cargo@v1
-      with:
-        command: publish
-        args: --dry-run --all-features
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check publish
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          args: --dry-run --all-features
+
   check_tests:
     name: Check for test types
     runs-on: ubuntu-latest
@@ -57,13 +56,12 @@ jobs:
         id: check_benchmarks
         run: test -d benchmarks && echo "has_benchmarks=1" || echo "has_benchmarks=" >> $GITHUB_OUTPUT
         shell: bash
-        
+
       - name: Check for examples
         id: check_examples
         run: test -d examples && echo "has_examples=1" || echo "has_examples=" >> $GITHUB_OUTPUT
         shell: bash
 
-        
   test:
     name: Test
     needs: [rustfmt, clippy]
@@ -75,31 +73,30 @@ jobs:
     continue-on-error: ${{ matrix.rust != 'stable' }}
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
-        
-    - uses: Swatinem/rust-cache@v2
-      
-    - name: Build
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --workspace ${{ matrix.test-features }}
-      
-    - name: Test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --workspace ${{ matrix.test-features }}
- 
-      
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --workspace ${{ matrix.test-features }}
+
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace ${{ matrix.test-features }}
+
   benchmarks:
     name: Benchmarks
     needs: [rustfmt, clippy, check_tests]
@@ -110,25 +107,24 @@ jobs:
         rust: ["stable"]
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
-        
-    - uses: Swatinem/rust-cache@v2
-      
-    - name: Run benchmarks with all features
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --workspace --benches --all-features --no-fail-fast
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run benchmarks with all features
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace --benches --all-features --no-fail-fast
+
   examples:
     name: Examples
     needs: [rustfmt, clippy, check_tests]
@@ -139,25 +135,25 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         rust: ["stable"]
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ matrix.rust }}
-        profile: minimal
-        override: true
-        
-    - uses: Swatinem/rust-cache@v2
-      
-    - name: Run examples with all features
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
-        args: --workspace --examples --all-features --no-fail-fast
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-  coverage:   
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run examples with all features
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace --examples --all-features --no-fail-fast
+
+  coverage:
     name: Code Coverage
     needs: test
     runs-on: ubuntu-latest
@@ -192,73 +188,71 @@ jobs:
           name: code-coverage-report
           path: cobertura.xml
 
-          
   docs:
     name: Document generation
     needs: [rustfmt, clippy]
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-        
-    - uses: Swatinem/rust-cache@v2
-      
-    - name: Generate documentation
-      uses: actions-rs/cargo@v1
-      with:
-        command: doc
-        args: --workspace --all-features --no-deps
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Generate documentation
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --workspace --all-features --no-deps
+
   rustfmt:
     name: rustfmt
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-        components: rustfmt
-              
-    - uses: Swatinem/rust-cache@v2
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-    - name: Check formatting
-      uses: actions-rs/cargo@v1
-      with:
-        command: fmt
-        args: --all -- --check
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          components: rustfmt
 
-      
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
   clippy:
     name: clippy
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v7
-      
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        override: true
-        components: clippy
-              
-    - uses: Swatinem/rust-cache@v2
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
-    - uses: actions-rs/clippy-check@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        args: --workspace --all-features --all-targets -- -D warnings
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Clippy check
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-features --all-targets -- -D warnings
